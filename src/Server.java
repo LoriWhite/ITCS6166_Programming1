@@ -1,4 +1,7 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -13,7 +16,7 @@ public class Server {
 		try {
 			lock = new Object();
 			serverSocket = new ServerSocket(port);
-			serverSocket.setSoTimeout(100);
+			//serverSocket.setSoTimeout(100);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -26,7 +29,13 @@ public class Server {
 			for(;;) {
 				Socket socket = serverSocket.accept();
 				if(socket != null) {
-					//socket.
+					BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+					String line;
+					do {
+						line = reader.readLine();
+						System.out.println(line);
+					} while(line != null && line.length() != 0);
+					socket.getOutputStream().write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
 				}
 			}
 		}catch(IOException e) {return;}
@@ -34,6 +43,7 @@ public class Server {
 	
 	public void run() {
 		System.out.println(port);
+		listen();
 	}
 	
 	public static void main(String [] args) {
