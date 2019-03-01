@@ -26,12 +26,12 @@ public class Server {
 			for(;;) {
 				Socket socket = serverSocket.accept();
 				if(socket != null) {
-					
+					//socket.
 				}
 			}
 		}catch(IOException e) {return;}
 	}
-	@Override
+	
 	public void run() {
 		System.out.println(port);
 	}
@@ -49,6 +49,6 @@ public class Server {
 			System.exit(0);
 		}
 		Server server = new Server(port);
-		server.start();
+		server.run();
 	}
 }
