@@ -17,7 +17,7 @@ public class Client implements Runnable
 		if(args.length != 4)
 		{
 			String h1 = args[0];
-			int p = Integer.parse(args[1]);
+			int p = Integer.parseInt(args[1]);
 			String c = args[2];
 			String f = args[3];
 			Thread t1 = new Thread(new Client(h1, p, c, f));
