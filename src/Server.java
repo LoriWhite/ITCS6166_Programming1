@@ -1,9 +1,11 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Date;
 
 public class Server {
 	private final int port;
@@ -30,12 +32,19 @@ public class Server {
 				Socket socket = serverSocket.accept();
 				if(socket != null) {
 					BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+					BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 					String line;
 					do {
 						line = reader.readLine();
 						System.out.println(line);
 					} while(line != null && line.length() != 0);
-					socket.getOutputStream().write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
+					
+					writer.write("HTTP/1.1 200 OK\r\n\r\n");
+			        
+			        writer.close();
+			        reader.close();
+			        socket.close();
+
 				}
 			}
 		}catch(IOException e) {return;}
