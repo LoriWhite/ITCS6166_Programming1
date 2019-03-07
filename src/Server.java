@@ -1,16 +1,19 @@
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Date;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class Server {
 	private final int port;
 	private ServerSocket serverSocket;
-	private Thread thread;
+	private ThreadPoolExecutor threadpool;
 	Object lock;
 	
 	public Server(int port) {
@@ -18,6 +21,7 @@ public class Server {
 		try {
 			lock = new Object();
 			serverSocket = new ServerSocket(port);
+			threadpool = (ThreadPoolExecutor)Executors.newCachedThreadPool();
 			//serverSocket.setSoTimeout(100);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -31,28 +35,73 @@ public class Server {
 			for(;;) {
 				Socket socket = serverSocket.accept();
 				if(socket != null) {
-					BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-					BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-					String line;
-					do {
-						line = reader.readLine();
-						System.out.println(line);
-					} while(line != null && line.length() != 0);
-					
-					writer.write("HTTP/1.1 200 OK\r\n\r\n");
-			        
-			        writer.close();
-			        reader.close();
-			        socket.close();
-
+					threadpool.execute(()->{process(socket);});
 				}
 			}
+		}catch(IOException e) {return;}
+	}
+	
+	public static void process(Socket socket) {
+		try {
+			InputStreamReader input = new InputStreamReader(socket.getInputStream());
+			BufferedReader reader = new BufferedReader(input, 10000);
+			OutputStreamWriter output = new OutputStreamWriter(socket.getOutputStream());
+			//BufferedWriter writer = new BufferedWriter(output);
+			String line = reader.readLine();
+			System.out.println(line);
+			
+			if(line != null) {
+				String[] splits = line.split(" ");
+				String action = splits[0];
+				String filename = splits[1];
+				
+				if(action.equals("GET")) {
+					File file = new File("./" + filename);
+					if(file.exists()) {
+						output.write("HTTP/1.1 200 OK\r\n\r\n");
+						//FileInputStream fis = new FileInputStream(file);
+						FileReader fr = new FileReader(file);
+						char[] buffer = new char[1024];
+						while(fr.read(buffer) > 0) {
+							output.write(buffer);
+						}
+						fr.close();
+					} else {
+						output.write("HTTP/1.1 404 Not Found\r\n\r\n");
+					}
+				} else if(action.equals("PUT")) {
+					File file = new File("./" + filename);
+					FileWriter fw = new FileWriter(file);
+					do {
+						line = reader.readLine();
+					} while(!line.isEmpty());
+					char[] buffer = new char[1024];
+					while(reader.ready() && reader.read(buffer) > 0) {
+						fw.write(buffer);
+					}
+					fw.close();
+					output.write("HTTP/1.1 200 OK File Created\r\n\r\n");
+				}
+			}
+			
+	        output.close();
+	        reader.close();
+	        socket.close();
 		}catch(IOException e) {return;}
 	}
 	
 	public void run() {
 		System.out.println(port);
 		listen();
+	}
+	
+	public void dispose() {
+		try {
+			serverSocket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public static void main(String [] args) {
@@ -69,5 +118,6 @@ public class Server {
 		}
 		Server server = new Server(port);
 		server.run();
+		server.dispose();
 	}
 }
