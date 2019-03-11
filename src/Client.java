@@ -74,13 +74,16 @@ public class Client implements Runnable
 				String output = command + " " + fileName + "\r\n\r\n";
 				
 				writer.write(output);
-				writer.close();
+				writer.flush();
 				
 				//prints what the server is outputting
-				String line = br.readLine();
-				System.out.println("server says:" + line);
-				
-				
+				String line;
+				System.out.println("server says:\n");
+				while((line = br.readLine()) != null)
+				{
+					System.out.println(line);
+				}
+				writer.close();
 				reader.close();
 				client.close();
 			}

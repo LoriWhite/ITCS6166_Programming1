@@ -17,9 +17,9 @@ public class Server
 	private ThreadPoolExecutor threadpool;
 	Object lock;
 	
-	public Server(int port) 
+	public Server(int inPort) 
 	{
-		this.port = port;
+		this.port = inPort;
 		try 
 		{
 			lock = new Object();
@@ -63,7 +63,7 @@ public class Server
 			//BufferedWriter writer = new BufferedWriter(output);
 			String line = reader.readLine();
 			
-			System.out.println(line);
+			//System.out.println(line);
 			
 			if(line != null && line != "") 
 			{
@@ -71,7 +71,7 @@ public class Server
 				String action = splits[0];
 				String filename = splits[1];
 				
-				if(action.equals("GET")) 
+				if(action.equalsIgnoreCase("GET")) 
 				{
 					File file = new File("./" + filename);
 					if(file.exists()) 
@@ -91,7 +91,7 @@ public class Server
 						output.write("HTTP/1.1 404 Not Found\r\n\r\n");
 					}
 				} 
-				else if(action.equals("PUT")) 
+				else if(action.equalsIgnoreCase("PUT")) 
 				{
 					File file = new File("./" + filename);
 					FileWriter fw = new FileWriter(file);
@@ -112,8 +112,8 @@ public class Server
 				}
 			}
 			
-	        //output.close();
-	        //reader.close();
+	        output.close();
+	        reader.close();
 		}
 		catch(IOException e) 
 		{
@@ -124,7 +124,7 @@ public class Server
 	
 	public void run() 
 	{
-		System.out.println(port);
+		//System.out.println(port);
 		listen();
 	}
 	
