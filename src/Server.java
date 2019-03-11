@@ -10,6 +10,12 @@ import java.net.Socket;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+/**
+ * Takes a command line argument that specifies the port number and uses it to listen for incoming connection requests.
+ * 
+ * @author Matthew Goodman, Lori White
+ * @version 3/11/2019
+ */
 public class Server 
 {
 	private final int port;
@@ -17,6 +23,11 @@ public class Server
 	private ThreadPoolExecutor threadpool;
 	Object lock;
 	
+	/**
+	 * A Server object.
+	 * 
+	 * @param inPort - the port number
+	 */
 	public Server(int inPort) 
 	{
 		this.port = inPort;
@@ -34,6 +45,9 @@ public class Server
 		}
 	}
 	
+	/**
+	 *  Listens for client requests.
+	 */
 	public void listen() 
 	{
 		try 
@@ -53,6 +67,11 @@ public class Server
 		}
 	}
 	
+	/**
+	 * Processes the Client's request.
+	 * 
+	 * @param socket - incoming client
+	 */
 	public static void process(Socket socket) 
 	{
 		try 
@@ -122,12 +141,18 @@ public class Server
 		}
 	}
 	
+	/**
+	 * Runs the Server.
+	 */
 	public void run() 
 	{
 		//System.out.println(port);
 		listen();
 	}
 	
+	/**
+	 * Closes the Server.
+	 */
 	public void dispose() 
 	{
 		try 

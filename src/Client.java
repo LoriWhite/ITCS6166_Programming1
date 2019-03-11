@@ -5,6 +5,13 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+/**
+ * Takes the following command line arguments (in order): server name, port on which to contact the server, HTTP command (GET or PUT),
+ * and the path of the requested object on the server.
+ * 
+ * @author Matthew Goodman, Lori White
+ * @version 3/11/2019
+ */
 public class Client implements Runnable
 {
 	Socket client;
@@ -38,6 +45,14 @@ public class Client implements Runnable
 		}
 	}
 	
+	/**
+	 * A client object.
+	 * 
+	 * @param inHost - the host name
+	 * @param inPort - the port number
+	 * @param inCommand - the command used
+	 * @param inFile - the file name
+	 */
 	Client(String inHost, int inPort, String inCommand, String inFile)
 	{
 		host = inHost;
@@ -61,6 +76,9 @@ public class Client implements Runnable
 		}
 	}
 	
+	/** 
+	 * Runs the Client.
+	 */
 	public void run()
 	{
 		try
