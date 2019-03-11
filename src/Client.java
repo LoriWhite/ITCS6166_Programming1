@@ -14,14 +14,22 @@ public class Client implements Runnable
 	
 	public static void main(String [] args) 
 	{
-		if(args.length != 4)
+		if(args.length == 4)
 		{
-			String h1 = args[0];
-			int p = Integer.parseInt(args[1]);
-			String c = args[2];
-			String f = args[3];
-			Thread t1 = new Thread(new Client(h1, p, c, f));
-			t1.start(); 
+			try 
+			{
+				String h1 = args[0];
+				int p = Integer.parseInt(args[1]);
+				String c = args[2];
+				String f = args[3];
+				Thread t1 = new Thread(new Client(h1, p, c, f));
+				t1.start();
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+				System.exit(0);
+			}
 		}
 		else
 		{
@@ -43,12 +51,12 @@ public class Client implements Runnable
 	    catch (UnknownHostException e) 
 		{
 			System.out.println("Unknown host: localhost");
-			System.exit(1);
+			System.exit(0);
 		}//exits when there is not any input or output from the server
 		catch (IOException e) 
 		{
 			System.out.println("No I/O");
-			System.exit(1);
+			System.exit(0);
 		}
 	}
 	
@@ -61,7 +69,7 @@ public class Client implements Runnable
 			DataOutputStream writer = new DataOutputStream(client.getOutputStream());
 			try
 			{
-				writer.writeUTF("Client");
+				writer.writeUTF(command + " " + fileName);
 				//prints what the server is outputting
 				System.out.println("server says:" + reader.readUTF());
 			}

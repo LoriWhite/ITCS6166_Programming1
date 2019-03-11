@@ -10,39 +10,53 @@ import java.net.Socket;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
-public class Server {
+public class Server 
+{
 	private final int port;
 	private ServerSocket serverSocket;
 	private ThreadPoolExecutor threadpool;
 	Object lock;
 	
-	public Server(int port) {
+	public Server(int port) 
+	{
 		this.port = port;
-		try {
+		try 
+		{
 			lock = new Object();
 			serverSocket = new ServerSocket(port);
 			threadpool = (ThreadPoolExecutor)Executors.newCachedThreadPool();
 			//serverSocket.setSoTimeout(100);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} 
+		catch (IOException e) 
+		{
 			e.printStackTrace();
 			System.exit(0);
 		}
 	}
 	
-	public void listen() {
-		try {
-			for(;;) {
+	public void listen() 
+	{
+		try 
+		{
+			for(;;) 
+			{
 				Socket socket = serverSocket.accept();
-				if(socket != null) {
+				if(socket != null) 
+				{
 					threadpool.execute(()->{process(socket);});
 				}
 			}
-		}catch(IOException e) {return;}
+		}
+		catch(IOException e) 
+		{
+			return;
+		}
 	}
 	
-	public static void process(Socket socket) {
-		try {
+	public static void process(Socket socket) 
+	{
+		try 
+		{
 			InputStreamReader input = new InputStreamReader(socket.getInputStream());
 			BufferedReader reader = new BufferedReader(input, 10000);
 			OutputStreamWriter output = new OutputStreamWriter(socket.getOutputStream());
@@ -50,33 +64,46 @@ public class Server {
 			String line = reader.readLine();
 			System.out.println(line);
 			
-			if(line != null) {
+			if(line != null && line != "") 
+			{
 				String[] splits = line.split(" ");
 				String action = splits[0];
 				String filename = splits[1];
 				
-				if(action.equals("GET")) {
+				if(action.equals("GET")) 
+				{
 					File file = new File("./" + filename);
-					if(file.exists()) {
+					if(file.exists()) 
+					{
 						output.write("HTTP/1.1 200 OK\r\n\r\n");
 						//FileInputStream fis = new FileInputStream(file);
 						FileReader fr = new FileReader(file);
 						char[] buffer = new char[1024];
-						while(fr.read(buffer) > 0) {
+						while(fr.read(buffer) > 0) 
+						{
 							output.write(buffer);
 						}
 						fr.close();
-					} else {
+					} 
+					else 
+					{
 						output.write("HTTP/1.1 404 Not Found\r\n\r\n");
 					}
-				} else if(action.equals("PUT")) {
+				} 
+				else if(action.equals("PUT")) 
+				{
 					File file = new File("./" + filename);
 					FileWriter fw = new FileWriter(file);
-					do {
+					
+					do 
+					{
 						line = reader.readLine();
-					} while(!line.isEmpty());
+					} 
+					while(!line.isEmpty());
+					
 					char[] buffer = new char[1024];
-					while(reader.ready() && reader.read(buffer) > 0) {
+					while(reader.ready() && reader.read(buffer) > 0) 
+					{
 						fw.write(buffer);
 					}
 					fw.close();
@@ -87,32 +114,45 @@ public class Server {
 	        output.close();
 	        reader.close();
 	        socket.close();
-		}catch(IOException e) {return;}
+		}
+		catch(IOException e) 
+		{
+			return;
+		}
 	}
 	
-	public void run() {
+	public void run() 
+	{
 		System.out.println(port);
 		listen();
 	}
 	
-	public void dispose() {
-		try {
+	public void dispose() 
+	{
+		try 
+		{
 			serverSocket.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} 
+		catch (IOException e) 
+		{
 			e.printStackTrace();
 		}
 	}
 	
-	public static void main(String [] args) {
-		if(args.length != 1) {
-			System.out.println("Not enough argumetns!");
+	public static void main(String [] args) 
+	{
+		if(args.length != 1) 
+		{
+			System.out.println("Not enough arguments!");
 			return;
 		}
 		int port = 0;
-		try {
+		try 
+		{
 			port = Integer.parseInt(args[0]);
-		}catch(Exception e) {
+		}
+		catch(Exception e) 
+		{
 			e.printStackTrace();
 			System.exit(0);
 		}
