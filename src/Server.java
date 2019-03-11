@@ -62,6 +62,7 @@ public class Server
 			OutputStreamWriter output = new OutputStreamWriter(socket.getOutputStream());
 			//BufferedWriter writer = new BufferedWriter(output);
 			String line = reader.readLine();
+			
 			System.out.println(line);
 			
 			if(line != null && line != "") 
@@ -111,12 +112,12 @@ public class Server
 				}
 			}
 			
-	        output.close();
-	        reader.close();
-	        socket.close();
+	        //output.close();
+	        //reader.close();
 		}
 		catch(IOException e) 
 		{
+			e.printStackTrace();
 			return;
 		}
 	}

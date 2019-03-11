@@ -1,6 +1,7 @@
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -65,23 +66,35 @@ public class Client implements Runnable
 		try
 		{
 			//creates the input and output communication  
-			DataInputStream reader = new DataInputStream(client.getInputStream());
-			DataOutputStream writer = new DataOutputStream(client.getOutputStream());
+			InputStreamReader reader = new InputStreamReader(client.getInputStream());
+			BufferedReader br = new BufferedReader(reader, 1000);
+			OutputStreamWriter writer = new OutputStreamWriter(client.getOutputStream());
 			try
 			{
-				writer.writeUTF(command + " " + fileName);
+				String output = command + " " + fileName + "\r\n\r\n";
+				
+				writer.write(output);
+				writer.close();
+				
 				//prints what the server is outputting
-				System.out.println("server says:" + reader.readUTF());
+				String line = br.readLine();
+				System.out.println("server says:" + line);
+				
+				
+				reader.close();
+				client.close();
 			}
 			catch (IOException e) 
 			{
 				System.out.println("Read failed");
+				e.printStackTrace();
 				System.exit(1);
 			}
 		 }//exits if the client can not create a input and output for communicating with the server
 		 catch (IOException e)
 		 {
-			System.out.println("Read failed");
+			System.out.println("Connection failed");
+			e.printStackTrace();
 	    	System.exit(1);
 		 }
 	}
