@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -90,8 +91,16 @@ public class Client implements Runnable
 			try
 			{
 				String output = command + " " + fileName + "\r\n\r\n";
-				
 				writer.write(output);
+				if(command.equalsIgnoreCase("PUT")) {
+					FileReader fr = new FileReader(fileName);
+					char[] buffer = new char[1024];
+					while(fr.read(buffer) > 0) 
+					{
+						writer.write(buffer);
+					}
+					fr.close();
+				}
 				writer.flush();
 				
 				//prints what the server is outputting
