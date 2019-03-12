@@ -88,11 +88,11 @@ public class Client implements Runnable
 		{
 			//creates the input and output communication  
 			InputStreamReader reader = new InputStreamReader(client.getInputStream());
-			BufferedReader br = new BufferedReader(reader, 1000);
+			BufferedReader br = new BufferedReader(reader, 10000);
 			OutputStreamWriter writer = new OutputStreamWriter(client.getOutputStream());
 			try
 			{
-				String output = command + " " + fileName + "HTTP/1.1\r\n"
+				String output = command + " /" + fileName + " HTTP/1.1\r\n"
 						+ "Host: " + host + "\r\n"
 						+ "\r\n";
 				writer.write(output);
