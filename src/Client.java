@@ -1,5 +1,7 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -106,9 +108,27 @@ public class Client implements Runnable
 				//prints what the server is outputting
 				String line;
 				//System.out.println("server says:\n");
-				while((line = br.readLine()) != null)
-				{
-					System.out.println(line);
+				if(command.equalsIgnoreCase("GET")) {
+					File file = new File("./" + fileName);
+					FileWriter fw = new FileWriter(file);
+					
+					//Outputs the HTTP message
+					while((line = br.readLine()) != null && !line.isEmpty()) {
+						System.out.println(line);
+					}
+					
+					//Downloads the object and displays it's content
+					while((line = br.readLine()) != null) 
+					{
+						fw.write(line);
+						System.out.println(line);
+					}
+					fw.close();
+				} else {
+					while((line = br.readLine()) != null)
+					{
+						System.out.println(line);
+					} 
 				}
 				writer.close();
 				reader.close();
