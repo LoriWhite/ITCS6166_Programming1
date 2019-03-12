@@ -52,6 +52,7 @@ public class Server
 	{
 		try 
 		{
+			System.out.println("Server Online!");
 			for(;;) 
 			{
 				Socket socket = serverSocket.accept();
@@ -92,6 +93,8 @@ public class Server
 				
 				if(action.equalsIgnoreCase("GET")) 
 				{
+					System.out.println("Processing GET request from: " + socket.getInetAddress().toString());
+					
 					File file = new File("./" + filename);
 					if(file.exists()) 
 					{
@@ -112,6 +115,8 @@ public class Server
 				} 
 				else if(action.equalsIgnoreCase("PUT")) 
 				{
+					System.out.println("Processing PUT request from: " + socket.getInetAddress().toString());
+					
 					File file = new File("./" + filename);
 					FileWriter fw = new FileWriter(file);
 					
@@ -129,10 +134,14 @@ public class Server
 					fw.close();
 					output.write("HTTP/1.1 200 OK File Created\r\n\r\n");
 				}
+				else {
+					System.out.println("Unknown request from: " + socket.getInetAddress().toString());
+				}
 			}
 			
 	        output.close();
 	        reader.close();
+	        socket.close();
 		}
 		catch(IOException e) 
 		{

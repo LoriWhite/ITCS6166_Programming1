@@ -96,7 +96,7 @@ public class Client implements Runnable
 				
 				//prints what the server is outputting
 				String line;
-				System.out.println("server says:\n");
+				//System.out.println("server says:\n");
 				while((line = br.readLine()) != null)
 				{
 					System.out.println(line);
