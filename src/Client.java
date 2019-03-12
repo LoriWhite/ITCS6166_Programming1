@@ -69,7 +69,7 @@ public class Client implements Runnable
 		} 
 	    catch (UnknownHostException e) 
 		{
-			System.out.println("Unknown host: localhost");
+			System.out.println("Unknown host: " + host);
 			System.exit(0);
 		}//exits when there is not any input or output from the server
 		catch (IOException e) 
@@ -92,7 +92,9 @@ public class Client implements Runnable
 			OutputStreamWriter writer = new OutputStreamWriter(client.getOutputStream());
 			try
 			{
-				String output = command + " " + fileName + "\r\n\r\n";
+				String output = command + " " + fileName + "HTTP/1.1\r\n"
+						+ "Host: " + host + "\r\n"
+						+ "\r\n";
 				writer.write(output);
 				if(command.equalsIgnoreCase("PUT")) {
 					FileReader fr = new FileReader(fileName);
@@ -108,28 +110,31 @@ public class Client implements Runnable
 				//prints what the server is outputting
 				String line;
 				//System.out.println("server says:\n");
-				if(command.equalsIgnoreCase("GET")) {
-					File file = new File("./" + fileName);
-					FileWriter fw = new FileWriter(file);
-					
-					//Outputs the HTTP message
-					while((line = br.readLine()) != null && !line.isEmpty()) {
-						System.out.println(line);
-					}
-					
-					//Downloads the object and displays it's content
-					while((line = br.readLine()) != null) 
-					{
-						fw.write(line);
-						System.out.println(line);
-					}
-					fw.close();
-				} else {
-					while((line = br.readLine()) != null)
-					{
-						System.out.println(line);
-					} 
-				}
+				
+				//Unnecessary file saving
+//				if(command.equalsIgnoreCase("GET")) {
+//					File file = new File("./" + fileName);
+//					FileWriter fw = new FileWriter(file);
+//					
+//					//Outputs the HTTP message
+//					while((line = br.readLine()) != null && !line.isEmpty()) {
+//						System.out.println(line);
+//					}
+//					
+//					//Downloads the object and displays it's content
+//					while((line = br.readLine()) != null) 
+//					{
+//						fw.write(line);
+//						System.out.println(line);
+//					}
+//					fw.close();
+//				} else {
+				
+				while((line = br.readLine()) != null)
+				{
+					System.out.println(line);
+				} 
+//				}
 				writer.close();
 				reader.close();
 				client.close();
